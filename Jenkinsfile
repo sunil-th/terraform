@@ -6,6 +6,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('Secret-key')
     }
 
+    stages {
         stage('Checkout Code') {
             steps {
                 git url: 'https://github.com/sunil-th/terraform.git', branch: 'main'
@@ -32,7 +33,8 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply '
+                sh 'terraform apply -auto-approve'
             }
         }
     }
+}
