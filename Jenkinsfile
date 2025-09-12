@@ -6,13 +6,6 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('Secret-key')
     }
 
-    stages {
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
-            }
-        }
-
         stage('Checkout Code') {
             steps {
                 git url: 'https://github.com/sunil-th/terraform.git', branch: 'main'
@@ -33,13 +26,13 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -var "prefix=MR" -var "owner=JenkinsUser"'
+                sh 'terraform plan'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve -var "prefix=MR" -var "owner=JenkinsUser"'
+                sh 'terraform apply '
             }
         }
     }
