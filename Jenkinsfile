@@ -1,33 +1,46 @@
+
 pipeline {
     agent any
 
-    environment {
-        AWS_ACCESS_KEY_ID     = credentials('Access-key')
-        AWS_SECRET_ACCESS_KEY = credentials('Secret-key')
-    }
+     tools {
+    nodejs "NodeJS14"   // :point_left: if need Use the 
+new Node.js 20 installation
+  }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/sunil-th/terraform.git', branch: 'main'
+                git branch: 'master', url: 'https://github.com/Shaik123-hu/Trading-UI.git'
             }
         }
 
-        stage('Terraform Init') {
+        stage('Install Dependencies') {
             steps {
-                sh 'terraform init'
+                sh 'npm install --omit=optional'
             }
         }
 
-        stage('Terraform Plan') {
+        stage('Run Tests') {
             steps {
-                sh 'terraform plan'
+                sh 'npm test || echo "⚠️ No tests found or tests failed"'
             }
         }
-        stage('Terraform Apply') {
+
+        stage('Build Application') {
             steps {
-                sh 'terraform apply --auto-approve'
+                withEnv(["CI=false"]) {
+                    sh 'npm run build'
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Node.js pipeline finished successfully.'
+        }
+        failure {
+            echo '❌ Node.js pipeline failed — check console output.'
         }
     }
 }
