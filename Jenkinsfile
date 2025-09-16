@@ -1,46 +1,30 @@
-
 pipeline {
     agent any
 
-     tools {
-    nodejs "NodeJS14"   // :point_left: if need Use the 
-new Node.js 20 installation
-  }
+   
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'master', url: 'https://github.com/Shaik123-hu/Trading-UI.git'
+                git url: 'https://github.com/sunil-th/terraform.git', branch: 'main'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Terraform Init') {
             steps {
-                sh 'npm install --omit=optional'
+                sh 'terraform init'
             }
         }
 
-        stage('Run Tests') {
+        stage('Terraform Plan') {
             steps {
-                sh 'npm test || echo "⚠️ No tests found or tests failed"'
+                sh 'terraform plan'
             }
         }
-
-        stage('Build Application') {
+        stage('Terraform Apply') {
             steps {
-                withEnv(["CI=false"]) {
-                    sh 'npm run build'
-                }
+                sh 'terraform apply --auto-approve'
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Node.js pipeline finished successfully.'
-        }
-        failure {
-            echo '❌ Node.js pipeline failed — check console output.'
         }
     }
 }
